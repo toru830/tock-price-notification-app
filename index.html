@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>株価通知アプリ</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-chart-line"></i> 株価通知アプリ</h1>
+            <p class="last-updated">最終更新: <span id="lastUpdated">-</span></p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" data-tab="my-stocks">保有銘柄</button>
+            <button class="tab-button" data-tab="watchlist">ウォッチリスト</button>
+            <button class="tab-button" data-tab="hot-stocks">ホット銘柄</button>
+        </div>
+
+        <div class="tab-content">
+            <!-- 保有銘柄タブ -->
+            <div id="my-stocks" class="tab-panel active">
+                <h2>保有銘柄</h2>
+                <div class="stocks-grid" id="myStocksGrid">
+                    <!-- 動的に生成 -->
+                </div>
+            </div>
+
+            <!-- ウォッチリストタブ -->
+            <div id="watchlist" class="tab-panel">
+                <h2>ウォッチリスト</h2>
+                <div class="stocks-grid" id="watchlistGrid">
+                    <!-- 動的に生成 -->
+                </div>
+            </div>
+
+            <!-- ホット銘柄タブ -->
+            <div id="hot-stocks" class="tab-panel">
+                <h2>ホット銘柄</h2>
+                <div class="stocks-grid" id="hotStocksGrid">
+                    <!-- 動的に生成 -->
+                </div>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>株価データを取得中...</p>
+        </div>
+
+        <div class="error" id="error" style="display: none;">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>データの取得に失敗しました。しばらくしてから再試行してください。</p>
+            <button onclick="loadStockData()" class="retry-btn">再試行</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

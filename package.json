@@ -1,0 +1,32 @@
+{
+  "name": "stock-price-notification-app",
+  "version": "1.0.0",
+  "description": "毎日の株価を通知してくれるWebアプリケーション",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000",
+    "build": "echo 'Static site - no build required'",
+    "deploy": "echo 'Deploy to GitHub Pages'"
+  },
+  "keywords": [
+    "stock",
+    "price",
+    "notification",
+    "finance",
+    "trading",
+    "sp500",
+    "fang",
+    "nvidia",
+    "meta"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/stock-price-notification-app.git"
+  },
+  "homepage": "https://yourusername.github.io/stock-price-notification-app/",
+  "devDependencies": {},
+  "dependencies": {}
+}
