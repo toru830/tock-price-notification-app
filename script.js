@@ -199,15 +199,21 @@ function getStockName(symbol) {
 
 // 株価データの表示
 function displayStocks(tabName) {
+    console.log('Displaying stocks for tab:', tabName);
     const gridElement = document.getElementById(`${tabName}Grid`);
-    if (!gridElement) return;
+    if (!gridElement) {
+        console.error('Grid element not found for tab:', tabName);
+        return;
+    }
     
     const stocks = STOCK_CONFIG[tabName] || [];
+    console.log('Stocks for', tabName, ':', stocks);
     
     gridElement.innerHTML = '';
     
     stocks.forEach(stock => {
         const data = stockData[stock.symbol];
+        console.log('Stock data for', stock.symbol, ':', data);
         const card = createStockCard(stock, data);
         gridElement.appendChild(card);
     });
