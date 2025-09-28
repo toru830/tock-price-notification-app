@@ -19,6 +19,16 @@
             <button class="tab-button active" data-tab="my-stocks">保有銘柄</button>
             <button class="tab-button" data-tab="watchlist">ウォッチリスト</button>
             <button class="tab-button" data-tab="hot-stocks">ホット銘柄</button>
+            <button class="tab-button" data-tab="news">マーケットニュース</button>
+        </div>
+
+        <div class="tab-controls" id="timeframeControls">
+            <label for="timeframeSelect"><i class="far fa-clock"></i> 表示期間</label>
+            <select id="timeframeSelect" aria-label="株価推移の表示期間を選択">
+                <option value="1M">1ヶ月</option>
+                <option value="3M">3ヶ月</option>
+                <option value="6M">6ヶ月</option>
+            </select>
         </div>
 
         <div class="tab-content">
@@ -42,6 +52,14 @@
             <div id="hot-stocks" class="tab-panel">
                 <h2>ホット銘柄</h2>
                 <div class="stocks-grid" id="hotStocksGrid">
+                    <!-- 動的に生成 -->
+                </div>
+            </div>
+
+            <!-- マーケットニュースタブ -->
+            <div id="news" class="tab-panel">
+                <h2>マーケットニュース</h2>
+                <div class="news-grid" id="newsGrid">
                     <!-- 動的に生成 -->
                 </div>
             </div>
