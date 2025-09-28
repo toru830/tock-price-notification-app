@@ -163,6 +163,12 @@ header h1 {
     color: #7f8c8d;
 }
 
+.chart-container {
+    position: relative;
+    height: 120px;
+    margin: 15px 0;
+}
+
 .stock-details {
     margin-top: 15px;
     padding-top: 15px;

@@ -25,9 +25,23 @@ const STOCK_CONFIG = {
     ]
 };
 
+// タブとDOMのマッピング
+const TAB_CONFIG_MAP = {
+    'my-stocks': 'myStocks',
+    'watchlist': 'watchlist',
+    'hot-stocks': 'hotStocks'
+};
+
+const GRID_ID_MAP = {
+    'my-stocks': 'myStocksGrid',
+    'watchlist': 'watchlistGrid',
+    'hot-stocks': 'hotStocksGrid'
+};
+
 // グローバル変数
 let currentTab = 'my-stocks';
 let stockData = {};
+let stockCharts = {};
 
 // DOM要素の取得
 const loadingElement = document.getElementById('loading');
@@ -47,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function initializeTabs() {
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabPanels = document.querySelectorAll('.tab-panel');
-    
+
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
             const targetTab = button.getAttribute('data-tab');
@@ -64,6 +78,8 @@ function initializeTabs() {
             displayStocks(targetTab);
         });
     });
+
+    displayStocks(currentTab);
 }
 
 // 株価データの読み込み
@@ -104,52 +120,97 @@ async function loadStockData() {
 // 個別の株価データを取得
 async function fetchStockData(symbol) {
     try {
-        // CORS制限のないAPIを使用
-        const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${symbol}/prev?adjusted=true&apikey=demo`);
-        
-        if (!response.ok) {
-            // フォールバック: モックデータを使用
-            return generateMockData(symbol);
-        }
-        
-        const data = await response.json();
-        
-        if (data.results && data.results.length > 0) {
-            const result = data.results[0];
-            const currentPrice = result.c;
-            const previousClose = result.o;
-            const change = currentPrice - previousClose;
-            const changePercent = (change / previousClose) * 100;
-            
-            return {
-                symbol: symbol,
-                name: getStockName(symbol),
-                price: currentPrice,
-                change: change,
-                changePercent: changePercent,
-                previousClose: previousClose,
-                high: result.h,
-                low: result.l,
-                volume: result.v,
-                marketCap: null,
-                currency: 'USD'
-            };
-        }
-        
-        return generateMockData(symbol);
+        const [quote, history] = await Promise.all([
+            fetchStockQuote(symbol),
+            fetchStockHistory(symbol)
+        ]);
+
+        return {
+            ...quote,
+            history
+        };
     } catch (error) {
         console.error(`株価データの取得に失敗 (${symbol}):`, error);
-        return generateMockData(symbol);
+        const mockQuote = generateMockQuote(symbol);
+        return {
+            ...mockQuote,
+            history: generateMockHistory(symbol, mockQuote.price)
+        };
+    }
+}
+
+// 現在値の取得
+async function fetchStockQuote(symbol) {
+    const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${symbol}/prev?adjusted=true&apikey=demo`);
+
+    if (!response.ok) {
+        throw new Error('株価クォートの取得に失敗');
+    }
+
+    const data = await response.json();
+
+    if (data.results && data.results.length > 0) {
+        const result = data.results[0];
+        const currentPrice = result.c;
+        const previousClose = result.o;
+        const change = currentPrice - previousClose;
+        const changePercent = (change / previousClose) * 100;
+
+        return {
+            symbol: symbol,
+            name: getStockName(symbol),
+            price: currentPrice,
+            change: change,
+            changePercent: changePercent,
+            previousClose: previousClose,
+            high: result.h,
+            low: result.l,
+            volume: result.v,
+            marketCap: null,
+            currency: 'USD'
+        };
+    }
+
+    throw new Error('株価クォートデータが空です');
+}
+
+// 株価推移の取得
+async function fetchStockHistory(symbol) {
+    try {
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setDate(endDate.getDate() - 14);
+
+        const formatDate = (date) => date.toISOString().split('T')[0];
+        const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/day/${formatDate(startDate)}/${formatDate(endDate)}?adjusted=true&sort=asc&limit=30&apikey=demo`);
+
+        if (!response.ok) {
+            throw new Error('株価推移の取得に失敗');
+        }
+
+        const data = await response.json();
+
+        if (data.results && data.results.length > 0) {
+            return data.results.map(point => ({
+                label: new Date(point.t).toLocaleDateString('ja-JP', { month: '2-digit', day: '2-digit' }),
+                close: point.c
+            }));
+        }
+
+        throw new Error('株価推移データが空です');
+    } catch (error) {
+        console.warn(`株価推移データの取得に失敗 (${symbol}):`, error);
+        return generateMockHistory(symbol);
     }
 }
 
 // モックデータを生成（デモ用）
-function generateMockData(symbol) {
+function generateMockQuote(symbol) {
     const basePrice = getBasePrice(symbol);
     const change = (Math.random() - 0.5) * basePrice * 0.1; // ±5%の変動
     const currentPrice = basePrice + change;
     const changePercent = (change / basePrice) * 100;
-    
+
     return {
         symbol: symbol,
         name: getStockName(symbol),
@@ -163,6 +224,25 @@ function generateMockData(symbol) {
         marketCap: null,
         currency: 'USD'
     };
+}
+
+function generateMockHistory(symbol, currentPrice = getBasePrice(symbol)) {
+    const history = [];
+    let price = currentPrice;
+
+    for (let i = 9; i >= 0; i--) {
+        const change = (Math.random() - 0.5) * price * 0.03;
+        price = Math.max(price + change, 1);
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+
+        history.push({
+            label: date.toLocaleDateString('ja-JP', { month: '2-digit', day: '2-digit' }),
+            close: Number(price.toFixed(2))
+        });
+    }
+
+    return history;
 }
 
 // 銘柄の基本価格を取得
@@ -205,21 +285,26 @@ function getStockName(symbol) {
 
 // 株価データの表示
 function displayStocks(tabName) {
-    console.log('Displaying stocks for tab:', tabName);
-    const gridElement = document.getElementById(`${tabName}Grid`);
+    const gridId = GRID_ID_MAP[tabName];
+    const configKey = TAB_CONFIG_MAP[tabName];
+
+    if (!gridId || !configKey) {
+        console.error('Unknown tab:', tabName);
+        return;
+    }
+
+    const gridElement = document.getElementById(gridId);
     if (!gridElement) {
         console.error('Grid element not found for tab:', tabName);
         return;
     }
-    
-    const stocks = STOCK_CONFIG[tabName] || [];
-    console.log('Stocks for', tabName, ':', stocks);
-    
+
+    const stocks = STOCK_CONFIG[configKey] || [];
+
     gridElement.innerHTML = '';
-    
+
     stocks.forEach(stock => {
         const data = stockData[stock.symbol];
-        console.log('Stock data for', stock.symbol, ':', data);
         const card = createStockCard(stock, data);
         gridElement.appendChild(card);
     });
@@ -229,7 +314,7 @@ function displayStocks(tabName) {
 function createStockCard(stock, data) {
     const card = document.createElement('div');
     card.className = 'stock-card';
-    
+
     if (!data) {
         card.innerHTML = `
             <div class="stock-header">
@@ -248,7 +333,8 @@ function createStockCard(stock, data) {
     
     const changeClass = data.change > 0 ? 'positive' : data.change < 0 ? 'negative' : 'neutral';
     const changeIcon = data.change > 0 ? 'fa-arrow-up' : data.change < 0 ? 'fa-arrow-down' : 'fa-minus';
-    
+    const canvasId = `chart-${sanitizeSymbolForId(data.symbol)}`;
+
     card.innerHTML = `
         <div class="stock-header">
             <div>
@@ -260,6 +346,9 @@ function createStockCard(stock, data) {
         <div class="stock-change ${changeClass}">
             <i class="fas ${changeIcon}"></i>
             $${data.change.toFixed(2)} (${data.changePercent.toFixed(2)}%)
+        </div>
+        <div class="chart-container">
+            <canvas id="${canvasId}" height="120"></canvas>
         </div>
         <div class="stock-details">
             <div class="detail-item">
@@ -280,8 +369,74 @@ function createStockCard(stock, data) {
             </div>
         </div>
     `;
-    
+
+    requestAnimationFrame(() => {
+        renderPriceChart(canvasId, data.history);
+    });
+
     return card;
+}
+
+function sanitizeSymbolForId(symbol) {
+    return symbol.replace(/[^a-zA-Z0-9_-]/g, '').toLowerCase();
+}
+
+function renderPriceChart(canvasId, history) {
+    if (!Array.isArray(history) || history.length === 0) {
+        return;
+    }
+
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) {
+        return;
+    }
+
+    const ctx = canvas.getContext('2d');
+
+    if (stockCharts[canvasId]) {
+        stockCharts[canvasId].destroy();
+    }
+
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, 'rgba(102, 126, 234, 0.4)');
+    gradient.addColorStop(1, 'rgba(118, 75, 162, 0)');
+
+    stockCharts[canvasId] = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: history.map(point => point.label),
+            datasets: [{
+                data: history.map(point => point.close),
+                tension: 0.3,
+                borderColor: '#667eea',
+                backgroundColor: gradient,
+                fill: true,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (context) => `$${context.parsed.y.toFixed(2)}`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    display: false
+                },
+                y: {
+                    display: false
+                }
+            }
+        }
+    });
 }
 
 // 数値のフォーマット
