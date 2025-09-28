@@ -4,7 +4,9 @@ const STOCK_CONFIG = {
     myStocks: [
         { symbol: 'SPY', name: 'SPDR S&P 500 ETF Trust', category: 'etf' },
         { symbol: 'NVDA', name: 'NVIDIA Corporation', category: 'stock' },
-        { symbol: 'META', name: 'Meta Platforms Inc', category: 'stock' }
+        { symbol: 'META', name: 'Meta Platforms Inc', category: 'stock' },
+        { symbol: 'NYFANG', name: 'NYSE FANG+ Index', category: 'index' },
+        { symbol: 'SPX', name: 'S&P 500 Index', category: 'index' }
     ],
     
     // ウォッチリスト
@@ -169,6 +171,8 @@ function getBasePrice(symbol) {
         'SPY': 450,
         'NVDA': 800,
         'META': 300,
+        'NYFANG': 6300,
+        'SPX': 4800,
         'SOXL': 25,
         'QQQ': 400,
         'AAPL': 180,
@@ -186,6 +190,8 @@ function getStockName(symbol) {
         'SPY': 'SPDR S&P 500 ETF Trust',
         'NVDA': 'NVIDIA Corporation',
         'META': 'Meta Platforms Inc',
+        'NYFANG': 'NYSE FANG+ Index',
+        'SPX': 'S&P 500 Index',
         'SOXL': 'Direxion Daily Semiconductor Bull 3X Shares',
         'QQQ': 'Invesco QQQ Trust',
         'AAPL': 'Apple Inc',
