@@ -38,21 +38,52 @@ const GRID_ID_MAP = {
     'hot-stocks': 'hotStocksGrid'
 };
 
+const TIMEFRAME_OPTIONS = {
+    '1M': { label: '1ヶ月', days: 30 },
+    '3M': { label: '3ヶ月', days: 90 },
+    '6M': { label: '6ヶ月', days: 180 }
+};
+
+const NEWS_TOPICS = [
+    {
+        title: 'AI半導体需要の高まりで主要テック企業が投資を加速',
+        summary: '生成AI向けの需要拡大を背景に、主要半導体メーカーとクラウド企業が生産能力の増強や提携を相次いで発表。最新の決算では、関連セグメントの売上が前年同期比で大幅に伸長しています。',
+        sourceName: 'Bloomberg',
+        sourceUrl: 'https://www.bloomberg.co.jp/'
+    },
+    {
+        title: '米国インフレ鈍化で金融政策の先行きに注目',
+        summary: '最新の消費者物価指数（CPI）が市場予想を下回り、米連邦準備制度理事会（FRB）が利上げ停止に踏み切るとの観測が強まっています。債券利回りの低下を受け、ハイテク株が買い戻される展開となりました。',
+        sourceName: 'The Wall Street Journal',
+        sourceUrl: 'https://jp.wsj.com/'
+    },
+    {
+        title: 'ビッグテックの決算、クラウド・広告収入が堅調',
+        summary: '主要IT企業の四半期決算が出揃い、クラウドサービスとオンライン広告の伸びが業績を牽引。生成AI機能の導入が利用拡大につながり、利益率の改善にも寄与しています。',
+        sourceName: 'Nikkei Asia',
+        sourceUrl: 'https://asia.nikkei.com/'
+    }
+];
+
 // グローバル変数
 let currentTab = 'my-stocks';
 let stockData = {};
 let stockCharts = {};
+let currentTimeframe = '1M';
 
 // DOM要素の取得
 const loadingElement = document.getElementById('loading');
 const errorElement = document.getElementById('error');
 const lastUpdatedElement = document.getElementById('lastUpdated');
+const timeframeControls = document.getElementById('timeframeControls');
+const timeframeSelect = document.getElementById('timeframeSelect');
 
 // 初期化
 document.addEventListener('DOMContentLoaded', function() {
     initializeTabs();
+    initializeTimeframeControls();
     loadStockData();
-    
+
     // 5分ごとにデータを更新
     setInterval(loadStockData, 5 * 60 * 1000);
 });
@@ -65,21 +96,45 @@ function initializeTabs() {
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
             const targetTab = button.getAttribute('data-tab');
-            
+
             // アクティブなタブを切り替え
             tabButtons.forEach(btn => btn.classList.remove('active'));
             tabPanels.forEach(panel => panel.classList.remove('active'));
-            
+
             button.classList.add('active');
             document.getElementById(targetTab).classList.add('active');
             currentTab = targetTab;
-            
-            // 該当する株価データを表示
-            displayStocks(targetTab);
+
+            if (targetTab === 'news') {
+                if (timeframeControls) {
+                    timeframeControls.style.display = 'none';
+                }
+                displayNews();
+            } else {
+                if (timeframeControls) {
+                    timeframeControls.style.display = 'flex';
+                }
+                displayStocks(targetTab);
+            }
         });
     });
 
     displayStocks(currentTab);
+}
+
+function initializeTimeframeControls() {
+    if (!timeframeSelect) {
+        return;
+    }
+
+    timeframeSelect.value = currentTimeframe;
+    timeframeSelect.addEventListener('change', (event) => {
+        const value = event.target.value;
+        if (TIMEFRAME_OPTIONS[value]) {
+            currentTimeframe = value;
+            loadStockData();
+        }
+    });
 }
 
 // 株価データの読み込み
@@ -98,14 +153,18 @@ async function loadStockData() {
         // 株価データを並列で取得
         const promises = allSymbols.map(symbol => fetchStockData(symbol));
         const results = await Promise.allSettled(promises);
-        
+
         // 成功したデータのみを保存
+        const updatedStockData = { ...stockData };
         results.forEach((result, index) => {
             if (result.status === 'fulfilled' && result.value) {
-                stockData[allSymbols[index]] = result.value;
+                updatedStockData[allSymbols[index]] = result.value;
             }
         });
-        
+
+        stockData = updatedStockData;
+        resetCharts();
+
         // 現在のタブのデータを表示
         displayStocks(currentTab);
         updateLastUpdated();
@@ -122,7 +181,7 @@ async function fetchStockData(symbol) {
     try {
         const [quote, history] = await Promise.all([
             fetchStockQuote(symbol),
-            fetchStockHistory(symbol)
+            fetchStockHistory(symbol, currentTimeframe)
         ]);
 
         return {
@@ -134,7 +193,7 @@ async function fetchStockData(symbol) {
         const mockQuote = generateMockQuote(symbol);
         return {
             ...mockQuote,
-            history: generateMockHistory(symbol, mockQuote.price)
+            history: generateMockHistory(symbol, mockQuote.price, currentTimeframe)
         };
     }
 }
@@ -175,14 +234,15 @@ async function fetchStockQuote(symbol) {
 }
 
 // 株価推移の取得
-async function fetchStockHistory(symbol) {
+async function fetchStockHistory(symbol, timeframe = '1M') {
     try {
+        const timeframeSetting = TIMEFRAME_OPTIONS[timeframe] || TIMEFRAME_OPTIONS['1M'];
         const endDate = new Date();
         const startDate = new Date();
-        startDate.setDate(endDate.getDate() - 14);
+        startDate.setDate(endDate.getDate() - timeframeSetting.days);
 
         const formatDate = (date) => date.toISOString().split('T')[0];
-        const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/day/${formatDate(startDate)}/${formatDate(endDate)}?adjusted=true&sort=asc&limit=30&apikey=demo`);
+        const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/day/${formatDate(startDate)}/${formatDate(endDate)}?adjusted=true&sort=asc&limit=500&apikey=demo`);
 
         if (!response.ok) {
             throw new Error('株価推移の取得に失敗');
@@ -200,7 +260,7 @@ async function fetchStockHistory(symbol) {
         throw new Error('株価推移データが空です');
     } catch (error) {
         console.warn(`株価推移データの取得に失敗 (${symbol}):`, error);
-        return generateMockHistory(symbol);
+        return generateMockHistory(symbol, undefined, timeframe);
     }
 }
 
@@ -226,11 +286,13 @@ function generateMockQuote(symbol) {
     };
 }
 
-function generateMockHistory(symbol, currentPrice = getBasePrice(symbol)) {
+function generateMockHistory(symbol, currentPrice = getBasePrice(symbol), timeframe = '1M') {
     const history = [];
     let price = currentPrice;
+    const timeframeSetting = TIMEFRAME_OPTIONS[timeframe] || TIMEFRAME_OPTIONS['1M'];
+    const days = timeframeSetting.days;
 
-    for (let i = 9; i >= 0; i--) {
+    for (let i = days; i >= 0; i--) {
         const change = (Math.random() - 0.5) * price * 0.03;
         price = Math.max(price + change, 1);
         const date = new Date();
@@ -289,6 +351,10 @@ function displayStocks(tabName) {
     const configKey = TAB_CONFIG_MAP[tabName];
 
     if (!gridId || !configKey) {
+        if (tabName === 'news') {
+            displayNews();
+            return;
+        }
         console.error('Unknown tab:', tabName);
         return;
     }
@@ -307,6 +373,28 @@ function displayStocks(tabName) {
         const data = stockData[stock.symbol];
         const card = createStockCard(stock, data);
         gridElement.appendChild(card);
+    });
+}
+
+function displayNews() {
+    const newsGrid = document.getElementById('newsGrid');
+    if (!newsGrid) {
+        return;
+    }
+
+    newsGrid.innerHTML = '';
+
+    NEWS_TOPICS.forEach(article => {
+        const articleCard = document.createElement('article');
+        articleCard.className = 'news-card';
+        articleCard.innerHTML = `
+            <h3 class="news-title">${article.title}</h3>
+            <p class="news-summary">${article.summary}</p>
+            <a class="news-source" href="${article.sourceUrl}" target="_blank" rel="noopener noreferrer">
+                情報元: ${article.sourceName}
+            </a>
+        `;
+        newsGrid.appendChild(articleCard);
     });
 }
 
@@ -437,6 +525,15 @@ function renderPriceChart(canvasId, history) {
             }
         }
     });
+}
+
+function resetCharts() {
+    Object.keys(stockCharts).forEach(key => {
+        if (stockCharts[key]) {
+            stockCharts[key].destroy();
+        }
+    });
+    stockCharts = {};
 }
 
 // 数値のフォーマット
