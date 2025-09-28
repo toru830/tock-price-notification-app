@@ -2,7 +2,7 @@
 const STOCK_CONFIG = {
     // 保有銘柄
     myStocks: [
-        { symbol: '^GSPC', name: 'S&P 500', category: 'index' },
+        { symbol: 'SPY', name: 'SPDR S&P 500 ETF Trust', category: 'etf' },
         { symbol: 'NVDA', name: 'NVIDIA Corporation', category: 'stock' },
         { symbol: 'META', name: 'Meta Platforms Inc', category: 'stock' }
     ],
@@ -166,7 +166,7 @@ function generateMockData(symbol) {
 // 銘柄の基本価格を取得
 function getBasePrice(symbol) {
     const basePrices = {
-        '^GSPC': 4500,
+        'SPY': 450,
         'NVDA': 800,
         'META': 300,
         'SOXL': 25,
@@ -183,7 +183,7 @@ function getBasePrice(symbol) {
 // 銘柄名を取得
 function getStockName(symbol) {
     const names = {
-        '^GSPC': 'S&P 500',
+        'SPY': 'SPDR S&P 500 ETF Trust',
         'NVDA': 'NVIDIA Corporation',
         'META': 'Meta Platforms Inc',
         'SOXL': 'Direxion Daily Semiconductor Bull 3X Shares',
