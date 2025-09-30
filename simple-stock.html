@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シンプル株価アプリ</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f0f0f0; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { text-align: center; color: #333; margin-bottom: 30px; }
+        .tabs { display: flex; margin-bottom: 20px; }
+        .tab { padding: 10px 20px; background: #ddd; border: none; cursor: pointer; margin-right: 5px; }
+        .tab.active { background: #007bff; color: white; }
+        .content { background: white; padding: 20px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>シンプル株価アプリ</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('my-stocks')">保有銘柄</button>
+            <button class="tab" onclick="showTab('watchlist')">ウォッチリスト</button>
+            <button class="tab" onclick="showTab('hot-stocks')">ホット銘柄</button>
+        </div>
+        
+        <div class="content">
+            <div id="my-stocks">
+                <h2>保有銘柄</h2>
+                <p>銘柄がありません</p>
+            </div>
+            
+            <div id="watchlist" style="display: none;">
+                <h2>ウォッチリスト</h2>
+                <p>銘柄がありません</p>
+            </div>
+            
+            <div id="hot-stocks" style="display: none;">
+                <h2>ホット銘柄</h2>
+                <p>銘柄がありません</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showTab(tabName) {
+            document.getElementById('my-stocks').style.display = 'none';
+            document.getElementById('watchlist').style.display = 'none';
+            document.getElementById('hot-stocks').style.display = 'none';
+            
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById(tabName).style.display = 'block';
+        }
+    </script>
+</body>
+</html>
