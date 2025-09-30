@@ -6,58 +6,67 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
-    color: #333;
+    color: #2d3748;
+    overflow-x: hidden;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 16px;
+    width: 100%;
 }
 
 /* ヘッダー */
 header {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
     color: white;
 }
 
 header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    margin-bottom: 8px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    font-weight: 700;
 }
 
 .last-updated {
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     opacity: 0.9;
+    font-weight: 400;
 }
 
 /* タブ */
 .tabs {
     display: flex;
     justify-content: center;
-    margin-bottom: 30px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 10px;
-    padding: 5px;
+    margin-bottom: 24px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 4px;
     backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .tab-button {
     background: none;
     border: none;
-    padding: 15px 30px;
-    margin: 0 5px;
+    padding: 12px 20px;
+    margin: 0 2px;
     border-radius: 8px;
     color: white;
-    font-size: 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-weight: 500;
+    white-space: nowrap;
+    min-width: fit-content;
 }
 
 .tab-button:hover {
@@ -67,16 +76,18 @@ header h1 {
 .tab-button.active {
     background: white;
     color: #667eea;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
 /* タブコンテンツ */
 .tab-content {
     background: white;
-    border-radius: 15px;
-    padding: 30px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     min-height: 400px;
+    width: 100%;
+    overflow: hidden;
 }
 
 .tab-panel {
@@ -89,178 +100,241 @@ header h1 {
 
 .tab-panel h2 {
     margin-bottom: 20px;
-    color: #333;
-    font-size: 1.8rem;
+    color: #2d3748;
+    font-size: 1.5rem;
     text-align: center;
+    font-weight: 600;
 }
 
 /* 株価グリッド */
 .stocks-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
     margin-top: 20px;
+    width: 100%;
 }
 
 /* 株価カード */
 .stock-card {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     border-radius: 12px;
     padding: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-left: 4px solid #667eea;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+    position: relative;
+    overflow: hidden;
+}
+
+.stock-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
 }
 
 .stock-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 
 .stock-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+    align-items: flex-start;
+    margin-bottom: 16px;
 }
 
 .stock-symbol {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: #333;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 4px;
 }
 
 .stock-name {
-    font-size: 0.9rem;
-    color: #666;
-    margin-top: 2px;
+    font-size: 0.875rem;
+    color: #718096;
+    line-height: 1.4;
 }
 
 .stock-price {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 5px;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 8px;
 }
 
 .stock-change {
     display: flex;
     align-items: center;
-    gap: 5px;
-    font-size: 1rem;
-    font-weight: 500;
+    gap: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    width: fit-content;
 }
 
 .stock-change.positive {
-    color: #27ae60;
+    color: #38a169;
+    background: rgba(56, 161, 105, 0.1);
 }
 
 .stock-change.negative {
-    color: #e74c3c;
+    color: #e53e3e;
+    background: rgba(229, 62, 62, 0.1);
 }
 
 .stock-change.neutral {
-    color: #7f8c8d;
+    color: #718096;
+    background: rgba(113, 128, 150, 0.1);
 }
 
 .stock-details {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid #ddd;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 12px;
 }
 
 .detail-item {
     display: flex;
     justify-content: space-between;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
+    align-items: center;
 }
 
 .detail-label {
-    color: #666;
+    color: #718096;
+    font-weight: 500;
 }
 
 .detail-value {
+    font-weight: 600;
+    color: #2d3748;
+}
+
+/* グラフコンテナ */
+.chart-container {
+    margin-top: 16px;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.chart-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.chart-axis-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #718096;
+    margin-top: 8px;
+}
+
+.chart-placeholder {
+    height: 120px;
+    background: linear-gradient(45deg, #e2e8f0 25%, transparent 25%), 
+                linear-gradient(-45deg, #e2e8f0 25%, transparent 25%), 
+                linear-gradient(45deg, transparent 75%, #e2e8f0 75%), 
+                linear-gradient(-45deg, transparent 75%, #e2e8f0 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #718096;
+    font-size: 0.875rem;
     font-weight: 500;
-    color: #333;
 }
 
 /* ローディング */
 .loading {
     text-align: center;
-    padding: 50px;
+    padding: 60px 20px;
     color: white;
 }
 
 .loading i {
     font-size: 2rem;
-    margin-bottom: 15px;
+    margin-bottom: 16px;
+    opacity: 0.8;
+}
+
+.loading p {
+    font-size: 1rem;
+    font-weight: 500;
 }
 
 /* エラー */
 .error {
     text-align: center;
-    padding: 50px;
-    color: #e74c3c;
-    background: rgba(231, 76, 60, 0.1);
-    border-radius: 10px;
+    padding: 40px 20px;
+    color: #e53e3e;
+    background: rgba(229, 62, 62, 0.1);
+    border-radius: 12px;
     margin: 20px 0;
+    border: 1px solid rgba(229, 62, 62, 0.2);
 }
 
 .error i {
     font-size: 2rem;
-    margin-bottom: 15px;
+    margin-bottom: 16px;
+}
+
+.error p {
+    margin-bottom: 16px;
+    font-weight: 500;
 }
 
 .retry-btn {
-    background: #e74c3c;
+    background: #e53e3e;
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 12px 24px;
+    border-radius: 8px;
     cursor: pointer;
-    margin-top: 15px;
-    font-size: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
     transition: background 0.3s ease;
 }
 
 .retry-btn:hover {
-    background: #c0392b;
+    background: #c53030;
 }
 
 /* レスポンシブデザイン */
 @media (max-width: 768px) {
     .container {
-        padding: 10px;
-    }
-    
-    header h1 {
-        font-size: 2rem;
-    }
-    
-    .tabs {
-        flex-direction: column;
-        gap: 5px;
-    }
-    
-    .tab-button {
-        margin: 0;
-        padding: 12px 20px;
+        padding: 12px;
     }
     
     .tab-content {
-        padding: 20px;
+        padding: 16px;
     }
     
     .stocks-grid {
         grid-template-columns: 1fr;
-        gap: 15px;
+        gap: 12px;
     }
     
     .stock-card {
-        padding: 15px;
+        padding: 16px;
     }
     
     .stock-price {
@@ -271,24 +345,83 @@ header h1 {
         grid-template-columns: 1fr;
         gap: 8px;
     }
+    
+    .tabs {
+        padding: 2px;
+        margin-bottom: 16px;
+    }
+    
+    .tab-button {
+        padding: 10px 16px;
+        font-size: 0.8rem;
+    }
 }
 
 @media (max-width: 480px) {
-    header h1 {
-        font-size: 1.5rem;
+    .container {
+        padding: 8px;
     }
     
     .tab-content {
-        padding: 15px;
+        padding: 12px;
+        border-radius: 12px;
     }
     
     .stock-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: 5px;
+        gap: 8px;
     }
     
     .stock-price {
-        font-size: 1.3rem;
+        font-size: 1.25rem;
     }
+    
+    .stock-symbol {
+        font-size: 1.1rem;
+    }
+    
+    .chart-container {
+        padding: 12px;
+    }
+    
+    .chart-placeholder {
+        height: 100px;
+        font-size: 0.8rem;
+    }
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stock-card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* スクロールバーのカスタマイズ */
+.tabs::-webkit-scrollbar {
+    height: 4px;
+}
+
+.tabs::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+}
+
+.tabs::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 2px;
+}
+
+.tabs::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.5);
 }

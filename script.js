@@ -243,6 +243,9 @@ function createStockCard(stock, data) {
     const changeClass = data.change > 0 ? 'positive' : data.change < 0 ? 'negative' : 'neutral';
     const changeIcon = data.change > 0 ? 'fa-arrow-up' : data.change < 0 ? 'fa-arrow-down' : 'fa-minus';
     
+    // グラフデータを生成
+    const chartData = generateChartData(data);
+    
     card.innerHTML = `
         <div class="stock-header">
             <div>
@@ -254,6 +257,16 @@ function createStockCard(stock, data) {
         <div class="stock-change ${changeClass}">
             <i class="fas ${changeIcon}"></i>
             $${data.change.toFixed(2)} (${data.changePercent.toFixed(2)}%)
+        </div>
+        <div class="chart-container">
+            <div class="chart-title">価格推移</div>
+            <div class="chart-placeholder" id="chart-${data.symbol}">
+                <canvas id="canvas-${data.symbol}" width="300" height="120"></canvas>
+            </div>
+            <div class="chart-axis-labels">
+                <span>時間</span>
+                <span>価格 ($)</span>
+            </div>
         </div>
         <div class="stock-details">
             <div class="detail-item">
@@ -275,7 +288,128 @@ function createStockCard(stock, data) {
         </div>
     `;
     
+    // グラフを描画
+    setTimeout(() => {
+        drawChart(`canvas-${data.symbol}`, chartData, data);
+    }, 100);
+    
     return card;
+}
+
+// グラフデータを生成
+function generateChartData(data) {
+    const points = 24; // 24時間分のデータポイント
+    const basePrice = data.previousClose;
+    const currentPrice = data.price;
+    const volatility = Math.abs(data.change) / basePrice;
+    
+    const chartData = [];
+    for (let i = 0; i < points; i++) {
+        const progress = i / (points - 1);
+        const randomFactor = (Math.random() - 0.5) * volatility * 0.5;
+        const trendFactor = (currentPrice - basePrice) * progress;
+        const price = basePrice + trendFactor + (randomFactor * basePrice);
+        
+        chartData.push({
+            time: i,
+            price: Math.max(price, basePrice * 0.8) // 最低価格の制限
+        });
+    }
+    
+    return chartData;
+}
+
+// グラフを描画
+function drawChart(canvasId, data, stockData) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    
+    // キャンバスをクリア
+    ctx.clearRect(0, 0, width, height);
+    
+    // 価格の範囲を計算
+    const prices = data.map(d => d.price);
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    const priceRange = maxPrice - minPrice;
+    const padding = priceRange * 0.1;
+    
+    const yMin = minPrice - padding;
+    const yMax = maxPrice + padding;
+    
+    // グラフの描画
+    ctx.strokeStyle = stockData.change >= 0 ? '#38a169' : '#e53e3e';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    
+    data.forEach((point, index) => {
+        const x = (index / (data.length - 1)) * (width - 40) + 20;
+        const y = height - 20 - ((point.price - yMin) / (yMax - yMin)) * (height - 40);
+        
+        if (index === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    });
+    
+    ctx.stroke();
+    
+    // データポイントを描画
+    ctx.fillStyle = stockData.change >= 0 ? '#38a169' : '#e53e3e';
+    data.forEach((point, index) => {
+        const x = (index / (data.length - 1)) * (width - 40) + 20;
+        const y = height - 20 - ((point.price - yMin) / (yMax - yMin)) * (height - 40);
+        
+        ctx.beginPath();
+        ctx.arc(x, y, 2, 0, 2 * Math.PI);
+        ctx.fill();
+    });
+    
+    // グリッドラインを描画
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    
+    // 横線（価格レベル）
+    for (let i = 0; i <= 4; i++) {
+        const y = 20 + (i / 4) * (height - 40);
+        ctx.beginPath();
+        ctx.moveTo(20, y);
+        ctx.lineTo(width - 20, y);
+        ctx.stroke();
+    }
+    
+    // 縦線（時間）
+    for (let i = 0; i <= 6; i++) {
+        const x = 20 + (i / 6) * (width - 40);
+        ctx.beginPath();
+        ctx.moveTo(x, 20);
+        ctx.lineTo(x, height - 20);
+        ctx.stroke();
+    }
+    
+    // 価格ラベルを描画
+    ctx.fillStyle = '#718096';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'right';
+    
+    for (let i = 0; i <= 4; i++) {
+        const price = yMax - (i / 4) * (yMax - yMin);
+        const y = 20 + (i / 4) * (height - 40);
+        ctx.fillText('$' + price.toFixed(2), 18, y + 3);
+    }
+    
+    // 時間ラベルを描画
+    ctx.textAlign = 'center';
+    for (let i = 0; i <= 6; i++) {
+        const hour = Math.floor((i / 6) * 24);
+        const x = 20 + (i / 6) * (width - 40);
+        ctx.fillText(hour + ':00', x, height - 5);
+    }
 }
 
 // 数値のフォーマット
