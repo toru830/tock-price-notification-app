@@ -144,53 +144,48 @@ header h1 {
     font-size: 1.2rem;
     font-weight: 700;
     color: #2d3748;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
 }
 
-.stock-change {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 2px 6px;
-    border-radius: 4px;
-}
-
-.stock-change.positive {
-    color: #38a169;
-    background: rgba(56, 161, 105, 0.1);
-}
-
-.stock-change.negative {
-    color: #e53e3e;
-    background: rgba(229, 62, 62, 0.1);
-}
-
-
-/* 詳細情報 */
-.stock-details {
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid #e2e8f0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.comparison-list {
+    display: flex;
+    flex-direction: column;
     gap: 6px;
 }
 
-.detail-item {
+.comparison-item {
     display: flex;
     justify-content: space-between;
-    font-size: 0.7rem;
-}
-
-.detail-label {
-    color: #718096;
-}
-
-.detail-value {
-    font-weight: 600;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    background: rgba(226, 232, 240, 0.6);
     color: #2d3748;
+    transition: background 0.2s ease;
+}
+
+.comparison-item.positive {
+    color: #1f6f43;
+    background: rgba(56, 161, 105, 0.14);
+}
+
+.comparison-item.negative {
+    color: #c53030;
+    background: rgba(229, 62, 62, 0.14);
+}
+
+.comparison-item.neutral {
+    color: #4a5568;
+    background: rgba(226, 232, 240, 0.8);
+}
+
+.comparison-label {
+    font-weight: 600;
+}
+
+.comparison-value {
+    font-weight: 700;
 }
 
 /* ローディング・エラー */

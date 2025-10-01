@@ -23,6 +23,17 @@ const STOCK_CONFIG = {
     ]
 };
 
+// 比較期間の設定
+const COMPARISON_CONFIG = [
+    { key: 'previousDay', label: '前日比価格', tradingDays: 1 },
+    { key: 'oneWeek', label: '一週間前比価格', tradingDays: 5 },
+    { key: 'oneMonth', label: '1ヶ月前比価格', tradingDays: 21 },
+    { key: 'threeMonths', label: '3ヶ月前比価格', tradingDays: 63 },
+    { key: 'sixMonths', label: '半年前比価格', tradingDays: 126 },
+    { key: 'oneYear', label: '一年前比価格', tradingDays: 252 },
+    { key: 'twoYears', label: '二年前比価格', tradingDays: 504 }
+];
+
 // グローバル変数
 let currentTab = 'my-stocks';
 let stockData = {};
@@ -103,37 +114,41 @@ async function loadStockData() {
 async function fetchStockData(symbol) {
     try {
         // CORS制限のないAPIを使用
-        const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${symbol}/prev?adjusted=true&apikey=demo`);
-        
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setFullYear(startDate.getFullYear() - 2);
+
+        const formattedStart = formatDate(startDate);
+        const formattedEnd = formatDate(endDate);
+
+        const response = await fetch(`https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/day/${formattedStart}/${formattedEnd}?adjusted=true&sort=desc&limit=600&apikey=demo`);
+
         if (!response.ok) {
             // フォールバック: モックデータを使用
             return generateMockData(symbol);
         }
-        
+
         const data = await response.json();
-        
+
         if (data.results && data.results.length > 0) {
-            const result = data.results[0];
-            const currentPrice = result.c;
-            const previousClose = result.o;
-            const change = currentPrice - previousClose;
-            const changePercent = (change / previousClose) * 100;
-            
+            const results = data.results.slice().sort((a, b) => b.t - a.t);
+            const current = results[0];
+
+            if (!current || !current.c) {
+                return generateMockData(symbol);
+            }
+
+            const currentPrice = current.c;
+
             return {
                 symbol: symbol,
                 name: getStockName(symbol),
                 price: currentPrice,
-                change: change,
-                changePercent: changePercent,
-                previousClose: previousClose,
-                high: result.h,
-                low: result.l,
-                volume: result.v,
-                marketCap: null,
-                currency: 'USD'
+                currency: 'USD',
+                comparisons: buildComparisons(results, currentPrice)
             };
         }
-        
+
         return generateMockData(symbol);
     } catch (error) {
         console.error(`株価データの取得に失敗 (${symbol}):`, error);
@@ -146,20 +161,13 @@ function generateMockData(symbol) {
     const basePrice = getBasePrice(symbol);
     const change = (Math.random() - 0.5) * basePrice * 0.1; // ±5%の変動
     const currentPrice = basePrice + change;
-    const changePercent = (change / basePrice) * 100;
-    
+
     return {
         symbol: symbol,
         name: getStockName(symbol),
         price: currentPrice,
-        change: change,
-        changePercent: changePercent,
-        previousClose: basePrice,
-        high: currentPrice + Math.random() * basePrice * 0.02,
-        low: currentPrice - Math.random() * basePrice * 0.02,
-        volume: Math.floor(Math.random() * 10000000) + 1000000,
-        marketCap: null,
-        currency: 'USD'
+        currency: 'USD',
+        comparisons: generateMockComparisons(currentPrice)
     };
 }
 
@@ -225,6 +233,13 @@ function createStockCard(stock, data) {
     card.className = 'stock-card';
     
     if (!data) {
+        const placeholderItems = COMPARISON_CONFIG.map(config => `
+            <div class="comparison-item neutral">
+                <span class="comparison-label">${config.label}</span>
+                <span class="comparison-value">-</span>
+            </div>
+        `).join('');
+
         card.innerHTML = `
             <div class="stock-header">
                 <div>
@@ -233,16 +248,25 @@ function createStockCard(stock, data) {
                 </div>
             </div>
             <div class="stock-price">データ取得中...</div>
-            <div class="stock-change neutral">
-                <i class="fas fa-spinner fa-spin"></i>
+            <div class="comparison-list">
+                ${placeholderItems}
             </div>
         `;
         return card;
     }
     
-    const changeClass = data.change > 0 ? 'positive' : data.change < 0 ? 'negative' : 'neutral';
-    const changeIcon = data.change > 0 ? 'fa-arrow-up' : data.change < 0 ? 'fa-arrow-down' : 'fa-minus';
-    
+    const comparisonItems = COMPARISON_CONFIG.map(config => {
+        const comparison = data.comparisons ? data.comparisons[config.key] : null;
+        const changeClass = getChangeClass(comparison);
+        const value = formatComparisonValue(comparison, data.currency);
+        return `
+            <div class="comparison-item ${changeClass}">
+                <span class="comparison-label">${config.label}</span>
+                <span class="comparison-value">${value}</span>
+            </div>
+        `;
+    }).join('');
+
     card.innerHTML = `
         <div class="stock-header">
             <div>
@@ -250,44 +274,107 @@ function createStockCard(stock, data) {
                 <div class="stock-name">${data.name}</div>
             </div>
         </div>
-        <div class="stock-price">$${data.price.toFixed(2)}</div>
-        <div class="stock-change ${changeClass}">
-            <i class="fas ${changeIcon}"></i>
-            $${data.change.toFixed(2)} (${data.changePercent.toFixed(2)}%)
-        </div>
-        <div class="stock-details">
-            <div class="detail-item">
-                <span class="detail-label">前日終値</span>
-                <span class="detail-value">$${data.previousClose.toFixed(2)}</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">高値</span>
-                <span class="detail-value">$${data.high.toFixed(2)}</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">安値</span>
-                <span class="detail-value">$${data.low.toFixed(2)}</span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">出来高</span>
-                <span class="detail-value">${formatNumber(data.volume)}</span>
-            </div>
+        <div class="stock-price">価格: ${formatPrice(data.price, data.currency)}</div>
+        <div class="comparison-list">
+            ${comparisonItems}
         </div>
     `;
-    
+
     return card;
 }
 
-// 数値のフォーマット
-function formatNumber(num) {
-    if (num >= 1e9) {
-        return (num / 1e9).toFixed(1) + 'B';
-    } else if (num >= 1e6) {
-        return (num / 1e6).toFixed(1) + 'M';
-    } else if (num >= 1e3) {
-        return (num / 1e3).toFixed(1) + 'K';
+// 比較データの生成
+function buildComparisons(results, currentPrice) {
+    const comparisons = {};
+    COMPARISON_CONFIG.forEach(config => {
+        comparisons[config.key] = calculateComparison(results, config.tradingDays, currentPrice);
+    });
+    return comparisons;
+}
+
+function calculateComparison(results, index, currentPrice) {
+    if (!results || results.length <= index) {
+        return null;
     }
-    return num.toString();
+
+    const reference = results[index];
+    const referencePrice = reference.c;
+
+    if (!referencePrice || referencePrice === 0) {
+        return null;
+    }
+
+    const change = currentPrice - referencePrice;
+    const percent = (change / referencePrice) * 100;
+
+    return {
+        basePrice: referencePrice,
+        change: change,
+        percent: percent
+    };
+}
+
+function generateMockComparisons(currentPrice) {
+    const comparisons = {};
+    COMPARISON_CONFIG.forEach(config => {
+        const variation = 1 + (Math.random() - 0.5) * 0.2; // ±10%
+        const referencePrice = currentPrice / variation;
+        const change = currentPrice - referencePrice;
+        comparisons[config.key] = {
+            basePrice: referencePrice,
+            change: change,
+            percent: (change / referencePrice) * 100
+        };
+    });
+    return comparisons;
+}
+
+function getChangeClass(comparison) {
+    if (!comparison) {
+        return 'neutral';
+    }
+    if (comparison.change > 0) {
+        return 'positive';
+    }
+    if (comparison.change < 0) {
+        return 'negative';
+    }
+    return 'neutral';
+}
+
+function formatComparisonValue(comparison, currency) {
+    if (!comparison) {
+        return '-';
+    }
+
+    const change = formatPrice(Math.abs(comparison.change), currency);
+    const percent = Math.abs(comparison.percent).toFixed(2);
+    const changeSign = comparison.change > 0 ? '+' : comparison.change < 0 ? '-' : '';
+    const percentSign = comparison.percent > 0 ? '+' : comparison.percent < 0 ? '-' : '';
+
+    return `${changeSign}${change} (${percentSign}${percent}%)`;
+}
+
+function formatPrice(value, currency = 'USD') {
+    try {
+        const hasFraction = currency === 'JPY' ? 0 : 2;
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: currency,
+            minimumFractionDigits: hasFraction,
+            maximumFractionDigits: hasFraction
+        }).format(value);
+    } catch (error) {
+        const symbol = currency === 'JPY' ? '¥' : '$';
+        return `${symbol}${value.toFixed(2)}`;
+    }
+}
+
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 }
 
 // ローディング表示
