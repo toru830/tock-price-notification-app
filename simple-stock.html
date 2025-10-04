@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>シンプル株価アプリ v2</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f0f0f0; margin: 0; padding: 20px; }
+        body { font-family: Arial, sans-serif; background: #f0f0f0; margin: 0; padding: 0; }
         .container { max-width: 800px; margin: 0 auto; }
         h1 { text-align: center; color: #333; margin-bottom: 30px; }
         .tabs { display: flex; margin-bottom: 20px; }
@@ -71,14 +71,14 @@
         }
         .detail-label { 
             color: #666; 
-            font-size: 12px; 
+            font-size: 16px; 
             margin-bottom: 5px; 
             text-align: center; 
         }
         .detail-value { 
             font-weight: bold; 
             color: #333; 
-            font-size: 14px; 
+            font-size: 16px; 
             text-align: center; 
             line-height: 1.3; 
         }
@@ -91,6 +91,14 @@
         }
         
         @media (max-width: 768px) {
+            .container { 
+                max-width: 100%;
+                padding: 10px;
+                margin: 0;
+            }
+            .content {
+                padding: 15px;
+            }
             .stock-details { 
                 grid-template-columns: 1fr 1fr 1fr; 
                 gap: 8px; 
@@ -111,7 +119,16 @@
         
         @media (max-width: 480px) {
             .container { 
-                padding: 10px; 
+                max-width: 100%;
+                padding: 5px; 
+                margin: 0;
+            }
+            .content {
+                padding: 10px;
+                margin: 0;
+            }
+            body {
+                padding: 5px;
             }
             .stock-details { 
                 grid-template-columns: 1fr 1fr 1fr; 
@@ -149,74 +166,74 @@
                 <h3>投資信託</h3>
                 <div class="stock">
                     <div class="stock-name">iFreeNEXT FANG+</div>
-                    <div class="stock-price">¥15,420 <span class="stock-change positive">+¥180 (+1.18%)</span></div>
+                    <div class="stock-price">¥15,420 <span class="stock-change positive">+¥180 +1.18%</span></div>
                     <div class="stock-details">
                         <div class="detail-item">
                             <div class="detail-label">1日前</div>
                             <div class="detail-price">¥15,240</div>
-                            <div class="detail-change positive">+¥180 (+1.18%)</div>
+                            <div class="detail-change positive">+¥180 +1.18%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2日前</div>
                             <div class="detail-price">¥15,580</div>
-                            <div class="detail-change negative">-¥160 (-1.02%)</div>
+                            <div class="detail-change negative">-¥160 -1.02%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">1週間前</div>
                             <div class="detail-price">¥15,190</div>
-                            <div class="detail-change positive">+¥230 (+1.51%)</div>
+                            <div class="detail-change positive">+¥230 +1.51%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">6ヶ月前</div>
                             <div class="detail-price">¥14,200</div>
-                            <div class="detail-change positive">+¥1,220 (+8.59%)</div>
+                            <div class="detail-change positive">+¥1,220 +8.59%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">1年前</div>
                             <div class="detail-price">¥13,800</div>
-                            <div class="detail-change positive">+¥1,620 (+11.74%)</div>
+                            <div class="detail-change positive">+¥1,620 +11.74%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2年前</div>
                             <div class="detail-price">¥12,500</div>
-                            <div class="detail-change positive">+¥2,920 (+23.36%)</div>
+                            <div class="detail-change positive">+¥2,920 +23.36%</div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="stock">
                     <div class="stock-name">eMAXIS Slim 米国株式(S&P500)</div>
-                    <div class="stock-price">¥12,850 <span class="stock-change positive">+¥95 (+0.74%)</span></div>
+                    <div class="stock-price">¥12,850 <span class="stock-change positive">+¥95 +0.74%</span></div>
                     <div class="stock-details">
                         <div class="detail-item">
                             <div class="detail-label">1日前</div>
                             <div class="detail-price">¥12,755</div>
-                            <div class="detail-change positive">+¥95 (+0.74%)</div>
+                            <div class="detail-change positive">+¥95 +0.74%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2日前</div>
                             <div class="detail-price">¥12,920</div>
-                            <div class="detail-change negative">-¥70 (-0.54%)</div>
+                            <div class="detail-change negative">-¥70 -0.54%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">1週間前</div>
                             <div class="detail-price">¥12,680</div>
-                            <div class="detail-change positive">+¥170 (+1.34%)</div>
+                            <div class="detail-change positive">+¥170 +1.34%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">6ヶ月前</div>
                             <div class="detail-price">¥11,800</div>
-                            <div class="detail-change positive">+¥1,050 (+8.90%)</div>
+                            <div class="detail-change positive">+¥1,050 +8.90%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">1年前</div>
                             <div class="detail-price">¥11,200</div>
-                            <div class="detail-change positive">+¥1,650 (+14.73%)</div>
+                            <div class="detail-change positive">+¥1,650 +14.73%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2年前</div>
                             <div class="detail-price">¥10,500</div>
-                            <div class="detail-change positive">+¥2,350 (+22.38%)</div>
+                            <div class="detail-change positive">+¥2,350 +22.38%</div>
                         </div>
                     </div>
                 </div>
@@ -224,185 +241,185 @@
                 <h3>個別株</h3>
                 <div class="stock">
                     <div class="stock-name">GXUS テック・トップ２０</div>
-                    <div class="stock-price">¥8,750 <span class="stock-change positive">+¥120 (+1.39%)</span></div>
+                    <div class="stock-price">¥8,750 <span class="stock-change positive">+¥120 +1.39%</span></div>
                     <div class="stock-details">
                         <div class="detail-item">
                             <div class="detail-label">1日前</div>
                             <div class="detail-price">¥8,630</div>
-                            <div class="detail-change positive">+¥120 (+1.39%)</div>
+                            <div class="detail-change positive">+¥120 +1.39%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2日前</div>
                             <div class="detail-price">¥8,890</div>
-                            <div class="detail-change negative">-¥140 (-1.55%)</div>
+                            <div class="detail-change negative">-¥140 -1.55%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">1週間前</div>
                             <div class="detail-price">¥8,580</div>
-                            <div class="detail-change positive">+¥170 (+1.98%)</div>
+                            <div class="detail-change positive">+¥170 +1.98%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">6ヶ月前</div>
                             <div class="detail-price">¥7,800</div>
-                            <div class="detail-change positive">+¥950 (+12.18%)</div>
+                            <div class="detail-change positive">+¥950 +12.18%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">1年前</div>
                             <div class="detail-price">¥7,200</div>
-                            <div class="detail-change positive">+¥1,550 (+21.53%)</div>
+                            <div class="detail-change positive">+¥1,550 +21.53%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2年前</div>
                             <div class="detail-price">¥6,500</div>
-                            <div class="detail-change positive">+¥2,250 (+34.62%)</div>
+                            <div class="detail-change positive">+¥2,250 +34.62%</div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="stock">
                     <div class="stock-name">SOXL - Direxion デイリー 半導体株</div>
-                    <div class="stock-price">$45.20 <span class="stock-change positive">+$2.10 (+4.87%)</span></div>
+                    <div class="stock-price">$45.20 <span class="stock-change positive">+$2.10 +4.87%</span></div>
                     <div class="stock-details">
                         <div class="detail-item">
                             <div class="detail-label">1日前</div>
                             <div class="detail-price">$43.10</div>
-                            <div class="detail-change positive">+$2.10 (+4.87%)</div>
+                            <div class="detail-change positive">+$2.10 +4.87%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2日前</div>
                             <div class="detail-price">$46.80</div>
-                            <div class="detail-change negative">-$1.60 (-3.31%)</div>
+                            <div class="detail-change negative">-$1.60 -3.31%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">1週間前</div>
                             <div class="detail-price">$44.50</div>
-                            <div class="detail-change positive">+$0.70 (+1.57%)</div>
+                            <div class="detail-change positive">+$0.70 +1.57%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">6ヶ月前</div>
                             <div class="detail-price">$38.50</div>
-                            <div class="detail-change positive">+$6.70 (+17.40%)</div>
+                            <div class="detail-change positive">+$6.70 +17.40%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">1年前</div>
                             <div class="detail-price">$35.20</div>
-                            <div class="detail-change positive">+$10.00 (+28.41%)</div>
+                            <div class="detail-change positive">+$10.00 +28.41%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2年前</div>
                             <div class="detail-price">$28.80</div>
-                            <div class="detail-change positive">+$16.40 (+56.94%)</div>
+                            <div class="detail-change positive">+$16.40 +56.94%</div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="stock">
                     <div class="stock-name">TECL - Direxion デイリー テクノロジー</div>
-                    <div class="stock-price">$78.50 <span class="stock-change positive">+$1.80 (+2.35%)</span></div>
+                    <div class="stock-price">$78.50 <span class="stock-change positive">+$1.80 +2.35%</span></div>
                     <div class="stock-details">
                         <div class="detail-item">
                             <div class="detail-label">1日前</div>
                             <div class="detail-price">$76.70</div>
-                            <div class="detail-change positive">+$1.80 (+2.35%)</div>
+                            <div class="detail-change positive">+$1.80 +2.35%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2日前</div>
                             <div class="detail-price">$79.20</div>
-                            <div class="detail-change negative">-$0.70 (-0.88%)</div>
+                            <div class="detail-change negative">-$0.70 -0.88%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">1週間前</div>
                             <div class="detail-price">$77.10</div>
-                            <div class="detail-change positive">+$1.40 (+1.81%)</div>
+                            <div class="detail-change positive">+$1.40 +1.81%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">6ヶ月前</div>
                             <div class="detail-price">$68.50</div>
-                            <div class="detail-change positive">+$10.00 (+14.60%)</div>
+                            <div class="detail-change positive">+$10.00 +14.60%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">1年前</div>
                             <div class="detail-price">$62.30</div>
-                            <div class="detail-change positive">+$16.20 (+26.00%)</div>
+                            <div class="detail-change positive">+$16.20 +26.00%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2年前</div>
                             <div class="detail-price">$55.80</div>
-                            <div class="detail-change positive">+$22.70 (+40.68%)</div>
+                            <div class="detail-change positive">+$22.70 +40.68%</div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="stock">
                     <div class="stock-name">SPXL - Direxion デイリー S&P 500</div>
-                    <div class="stock-price">$125.80 <span class="stock-change positive">+$2.40 (+1.94%)</span></div>
+                    <div class="stock-price">$125.80 <span class="stock-change positive">+$2.40 +1.94%</span></div>
                     <div class="stock-details">
                         <div class="detail-item">
                             <div class="detail-label">1日前</div>
                             <div class="detail-price">$123.40</div>
-                            <div class="detail-change positive">+$2.40 (+1.94%)</div>
+                            <div class="detail-change positive">+$2.40 +1.94%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2日前</div>
                             <div class="detail-price">$127.50</div>
-                            <div class="detail-change negative">-$1.70 (-1.32%)</div>
+                            <div class="detail-change negative">-$1.70 -1.32%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">1週間前</div>
                             <div class="detail-price">$124.20</div>
-                            <div class="detail-change positive">+$1.60 (+1.29%)</div>
+                            <div class="detail-change positive">+$1.60 +1.29%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">6ヶ月前</div>
                             <div class="detail-price">$108.50</div>
-                            <div class="detail-change positive">+$17.30 (+15.94%)</div>
+                            <div class="detail-change positive">+$17.30 +15.94%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">1年前</div>
                             <div class="detail-price">$98.20</div>
-                            <div class="detail-change positive">+$27.60 (+28.11%)</div>
+                            <div class="detail-change positive">+$27.60 +28.11%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2年前</div>
                             <div class="detail-price">$85.30</div>
-                            <div class="detail-change positive">+$40.50 (+47.48%)</div>
+                            <div class="detail-change positive">+$40.50 +47.48%</div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="stock">
                     <div class="stock-name">FAS - Direxion デイリー 米国金融株</div>
-                    <div class="stock-price">$95.60 <span class="stock-change negative">-$1.20 (-1.24%)</span></div>
+                    <div class="stock-price">$95.60 <span class="stock-change negative">-$1.20 -1.24%</span></div>
                     <div class="stock-details">
                         <div class="detail-item">
                             <div class="detail-label">1日前</div>
                             <div class="detail-price">$96.80</div>
-                            <div class="detail-change negative">-$1.20 (-1.24%)</div>
+                            <div class="detail-change negative">-$1.20 -1.24%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2日前</div>
                             <div class="detail-price">$98.40</div>
-                            <div class="detail-change negative">-$2.80 (-2.84%)</div>
+                            <div class="detail-change negative">-$2.80 -2.84%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">1週間前</div>
                             <div class="detail-price">$94.90</div>
-                            <div class="detail-change positive">+$0.70 (+0.74%)</div>
+                            <div class="detail-change positive">+$0.70 +0.74%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">6ヶ月前</div>
                             <div class="detail-price">$88.50</div>
-                            <div class="detail-change positive">+$7.10 (+8.02%)</div>
+                            <div class="detail-change positive">+$7.10 +8.02%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">1年前</div>
                             <div class="detail-price">$82.30</div>
-                            <div class="detail-change positive">+$13.30 (+16.16%)</div>
+                            <div class="detail-change positive">+$13.30 +16.16%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2年前</div>
                             <div class="detail-price">$75.80</div>
-                            <div class="detail-change positive">+$19.80 (+26.12%)</div>
+                            <div class="detail-change positive">+$19.80 +26.12%</div>
                         </div>
                     </div>
                 </div>
@@ -417,49 +434,49 @@
                 <h2>FANG+銘柄</h2>
                 <div class="stock">
                     <div class="stock-name">AAPL - Apple Inc</div>
-                    <div class="stock-price">$180.00 <span class="stock-change positive">+$2.50 (+1.41%)</span></div>
+                    <div class="stock-price">$180.00 <span class="stock-change positive">+$2.50 +1.41%</span></div>
                     <div class="stock-details">
                         <div class="detail-item">
                             <div class="detail-label">1日前</div>
                             <div class="detail-price">$177.50</div>
-                            <div class="detail-change positive">+$2.50 (+1.41%)</div>
+                            <div class="detail-change positive">+$2.50 +1.41%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2日前</div>
                             <div class="detail-price">$182.30</div>
-                            <div class="detail-change negative">-$2.30 (-1.26%)</div>
+                            <div class="detail-change negative">-$2.30 -1.26%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">1週間前</div>
                             <div class="detail-price">$178.90</div>
-                            <div class="detail-change positive">+$1.10 (+0.61%)</div>
+                            <div class="detail-change positive">+$1.10 +0.61%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">6ヶ月前</div>
                             <div class="detail-price">$165.20</div>
-                            <div class="detail-change positive">+$14.80 (+8.96%)</div>
+                            <div class="detail-change positive">+$14.80 +8.96%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">1年前</div>
                             <div class="detail-price">$152.80</div>
-                            <div class="detail-change positive">+$27.20 (+17.80%)</div>
+                            <div class="detail-change positive">+$27.20 +17.80%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2年前</div>
                             <div class="detail-price">$138.50</div>
-                            <div class="detail-change positive">+$41.50 (+29.96%)</div>
+                            <div class="detail-change positive">+$41.50 +29.96%</div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="stock">
                     <div class="stock-name">GOOGL - Alphabet Inc Class A</div>
-                    <div class="stock-price">$140.00 <span class="stock-change positive">+$1.80 (+1.30%)</span></div>
+                    <div class="stock-price">$140.00 <span class="stock-change positive">+$1.80 +1.30%</span></div>
                     <div class="stock-details">
                         <div class="detail-item">
                             <div class="detail-label">1日前</div>
                             <div class="detail-price">$138.20</div>
-                            <div class="detail-change positive">+$1.80 (+1.30%)</div>
+                            <div class="detail-change positive">+$1.80 +1.30%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2日前</div>
@@ -491,12 +508,12 @@
                 
                 <div class="stock">
                     <div class="stock-name">AMZN - Amazon.com Inc</div>
-                    <div class="stock-price">$150.00 <span class="stock-change negative">-$2.00 (-1.32%)</span></div>
+                    <div class="stock-price">$150.00 <span class="stock-change negative">-$2.00 -1.32%</span></div>
                     <div class="stock-details">
                         <div class="detail-item">
                             <div class="detail-label">1日前</div>
                             <div class="detail-price">$152.00</div>
-                            <div class="detail-change negative">-$2.00 (-1.32%)</div>
+                            <div class="detail-change negative">-$2.00 -1.32%</div>
                         </div>
                         <div class="detail-item">
                             <div class="detail-label">2日前</div>
