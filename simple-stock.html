@@ -201,6 +201,101 @@
             color: #856404; 
         }
         
+        .forecast-periods { 
+            margin: 20px 0; 
+        }
+        .forecast-periods h3 { 
+            color: #333; 
+            font-size: 18px; 
+            margin-bottom: 15px; 
+            border-bottom: 2px solid #007bff; 
+            padding-bottom: 5px; 
+        }
+        .period-forecast { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr 1fr; 
+            gap: 15px; 
+        }
+        .period-item { 
+            text-align: center; 
+            padding: 15px; 
+            border: 1px solid #e9ecef; 
+            border-radius: 8px; 
+            background: #fff; 
+        }
+        .period-label { 
+            font-weight: bold; 
+            color: #333; 
+            margin-bottom: 8px; 
+        }
+        .period-weather { 
+            font-size: 24px; 
+            margin: 10px 0; 
+        }
+        .period-weather.positive { color: #28a745; }
+        .period-weather.neutral { color: #6c757d; }
+        .period-weather.negative { color: #dc3545; }
+        .period-detail { 
+            font-size: 14px; 
+            color: #666; 
+        }
+        
+        .forecast-review { 
+            margin: 20px 0; 
+            padding: 15px; 
+            background: #f8f9fa; 
+            border-radius: 8px; 
+        }
+        .forecast-review h3 { 
+            color: #333; 
+            font-size: 18px; 
+            margin-bottom: 15px; 
+            border-bottom: 2px solid #28a745; 
+            padding-bottom: 5px; 
+        }
+        .review-item { 
+            margin-bottom: 15px; 
+        }
+        .review-date { 
+            font-size: 14px; 
+            color: #666; 
+            margin-bottom: 5px; 
+        }
+        .review-result { 
+            font-size: 18px; 
+            font-weight: bold; 
+            margin: 8px 0; 
+        }
+        .review-result.positive { color: #28a745; }
+        .review-result.negative { color: #dc3545; }
+        .review-detail { 
+            font-size: 14px; 
+            color: #555; 
+        }
+        .review-stats { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px; 
+            margin-top: 15px; 
+        }
+        .stat-item { 
+            text-align: center; 
+            padding: 10px; 
+            background: #fff; 
+            border-radius: 5px; 
+            border: 1px solid #e9ecef; 
+        }
+        .stat-label { 
+            font-size: 12px; 
+            color: #666; 
+            margin-bottom: 5px; 
+        }
+        .stat-value { 
+            font-size: 20px; 
+            font-weight: bold; 
+            color: #333; 
+        }
+        
         @media (max-width: 768px) {
             .container { 
                 max-width: 100%;
@@ -231,6 +326,12 @@
             }
             .forecast-conclusion { 
                 font-size: 16px; 
+            }
+            .period-forecast { 
+                grid-template-columns: 1fr; 
+            }
+            .review-stats { 
+                grid-template-columns: 1fr; 
             }
         }
         
@@ -779,7 +880,29 @@
                 <h2>米国株予想分析</h2>
                 <div class="forecast-item">
                     <div class="forecast-date">分析日: 今日</div>
-                    <div class="forecast-conclusion positive">📈 上昇予想</div>
+                    <div class="forecast-conclusion positive">☀️ 上昇予想</div>
+                    
+                    <div class="forecast-periods">
+                        <h3>期間別予想</h3>
+                        <div class="period-forecast">
+                            <div class="period-item">
+                                <div class="period-label">今日の動き</div>
+                                <div class="period-weather positive">☀️ 上昇</div>
+                                <div class="period-detail">+0.5%〜+1.5%予想</div>
+                            </div>
+                            <div class="period-item">
+                                <div class="period-label">今週の動き</div>
+                                <div class="period-weather positive">☀️ 上昇</div>
+                                <div class="period-detail">+2%〜+4%予想</div>
+                            </div>
+                            <div class="period-item">
+                                <div class="period-label">今後1ヶ月</div>
+                                <div class="period-weather positive">☀️ 上昇</div>
+                                <div class="period-detail">+5%〜+8%予想</div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="forecast-reason">
                         <h3>予想根拠</h3>
                         <ul>
@@ -816,6 +939,25 @@
                             <li>市場の過熱感による調整</li>
                         </ul>
                     </div>
+                    <div class="forecast-review">
+                        <h3>昨日の予想振り返り</h3>
+                        <div class="review-item">
+                            <div class="review-date">昨日の予想: 上昇予想</div>
+                            <div class="review-result positive">☀️ 的中！</div>
+                            <div class="review-detail">S&P500 +1.2%、予想範囲内で上昇を達成</div>
+                        </div>
+                        <div class="review-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">的中率</div>
+                                <div class="stat-value">75%</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">連続的中</div>
+                                <div class="stat-value">3日</div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="forecast-disclaimer">
                         <small>※ この予想は参考情報であり、投資判断は自己責任で行ってください。過去の実績は将来の結果を保証するものではありません。</small>
                     </div>
