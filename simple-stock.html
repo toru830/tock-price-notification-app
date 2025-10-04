@@ -276,6 +276,24 @@
             font-size: 14px; 
             color: #555; 
         }
+        .review-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10px; 
+            margin-bottom: 15px; 
+        }
+        .review-item { 
+            padding: 10px; 
+            background: #fff; 
+            border-radius: 5px; 
+            border: 1px solid #e9ecef; 
+            text-align: center; 
+        }
+        .review-label { 
+            font-weight: bold; 
+            color: #333; 
+            margin-bottom: 5px; 
+        }
         .review-stats { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
@@ -326,7 +344,7 @@
                 font-size: 16px; 
             }
             .target-stocks { 
-                grid-template-columns: 1fr; 
+                grid-template-columns: 1fr 1fr; 
             }
             .forecast-conclusion { 
                 font-size: 16px; 
@@ -335,6 +353,9 @@
                 grid-template-columns: 1fr 1fr 1fr; 
             }
             .review-stats { 
+                grid-template-columns: 1fr; 
+            }
+            .review-grid { 
                 grid-template-columns: 1fr; 
             }
         }
@@ -1053,7 +1074,7 @@
                             <div class="target-stock positive">Meta: +4-7%</div>
                             <div class="target-stock positive">Tesla: +6-10%</div>
                             <div class="target-stock positive">NVIDIA: +5-8%</div>
-                            <div class="target-stock positive">ServiceNow: +3-6%</div>
+                            <div class="target-stock positive">SNOW: +3-6%</div>
                         </div>
                     </div>
                     <div class="forecast-targets">
@@ -1074,19 +1095,56 @@
                     </div>
                     <div class="forecast-review">
                         <h3>昨日の予想振り返り</h3>
-                        <div class="review-item">
-                            <div class="review-date">昨日の予想: 上昇予想</div>
-                            <div class="review-result positive">☀️ 的中！</div>
-                            <div class="review-detail">S&P500 +1.2%、予想範囲内で上昇を達成</div>
+                        <div class="review-grid">
+                            <div class="review-item">
+                                <div class="review-label">S&P500</div>
+                                <div class="review-result positive">☀️ 的中</div>
+                                <div class="review-detail">+1.2% (予想+0.5-1.5%)</div>
+                            </div>
+                            <div class="review-item">
+                                <div class="review-label">NASDAQ</div>
+                                <div class="review-result positive">☀️ 的中</div>
+                                <div class="review-detail">+1.8% (予想+1.0-2.0%)</div>
+                            </div>
+                            <div class="review-item">
+                                <div class="review-label">AAPL</div>
+                                <div class="review-result positive">☀️ 的中</div>
+                                <div class="review-detail">+2.1% (予想+1.5-2.5%)</div>
+                            </div>
+                            <div class="review-item">
+                                <div class="review-label">NVDA</div>
+                                <div class="review-result positive">☀️ 的中</div>
+                                <div class="review-detail">+3.2% (予想+2.0-3.5%)</div>
+                            </div>
+                            <div class="review-item">
+                                <div class="review-label">TSLA</div>
+                                <div class="review-result negative">🌧️ 外れ</div>
+                                <div class="review-detail">-0.8% (予想+1.0-2.0%)</div>
+                            </div>
+                            <div class="review-item">
+                                <div class="review-label">META</div>
+                                <div class="review-result positive">☀️ 的中</div>
+                                <div class="review-detail">+1.5% (予想+1.0-2.0%)</div>
+                            </div>
+                            <div class="review-item">
+                                <div class="review-label">SOXL</div>
+                                <div class="review-result positive">☀️ 的中</div>
+                                <div class="review-detail">+4.2% (予想+3.0-5.0%)</div>
+                            </div>
+                            <div class="review-item">
+                                <div class="review-label">TECL</div>
+                                <div class="review-result positive">☀️ 的中</div>
+                                <div class="review-detail">+2.8% (予想+2.0-3.5%)</div>
+                            </div>
                         </div>
                         <div class="review-stats">
                             <div class="stat-item">
                                 <div class="stat-label">的中率</div>
-                                <div class="stat-value">75%</div>
+                                <div class="stat-value">87.5%</div>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-label">連続的中</div>
-                                <div class="stat-value">3日</div>
+                                <div class="stat-value">5日</div>
                             </div>
                         </div>
                     </div>
