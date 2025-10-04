@@ -126,6 +126,81 @@
             text-decoration: underline; 
         }
         
+        .forecast-item { 
+            background: #f8f9fa; 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin-bottom: 20px; 
+        }
+        .forecast-date { 
+            color: #666; 
+            font-size: 14px; 
+            margin-bottom: 10px; 
+        }
+        .forecast-conclusion { 
+            font-size: 24px; 
+            font-weight: bold; 
+            text-align: center; 
+            margin: 20px 0; 
+            padding: 15px; 
+            border-radius: 8px; 
+        }
+        .forecast-conclusion.positive { 
+            background: #d4edda; 
+            color: #155724; 
+            border: 2px solid #c3e6cb; 
+        }
+        .forecast-conclusion.negative { 
+            background: #f8d7da; 
+            color: #721c24; 
+            border: 2px solid #f5c6cb; 
+        }
+        .forecast-reason, .forecast-targets, .forecast-risk { 
+            margin: 20px 0; 
+        }
+        .forecast-reason h3, .forecast-targets h3, .forecast-risk h3 { 
+            color: #333; 
+            font-size: 18px; 
+            margin-bottom: 10px; 
+            border-bottom: 2px solid #007bff; 
+            padding-bottom: 5px; 
+        }
+        .forecast-reason ul, .forecast-risk ul { 
+            margin: 10px 0; 
+            padding-left: 20px; 
+        }
+        .forecast-reason li, .forecast-risk li { 
+            margin: 8px 0; 
+            line-height: 1.5; 
+        }
+        .target-stocks { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10px; 
+        }
+        .target-stock { 
+            padding: 10px; 
+            border-radius: 5px; 
+            text-align: center; 
+            font-weight: bold; 
+        }
+        .target-stock.positive { 
+            background: #d4edda; 
+            color: #155724; 
+        }
+        .target-stock.negative { 
+            background: #f8d7da; 
+            color: #721c24; 
+        }
+        .forecast-disclaimer { 
+            margin-top: 20px; 
+            padding: 10px; 
+            background: #fff3cd; 
+            border: 1px solid #ffeaa7; 
+            border-radius: 5px; 
+            color: #856404; 
+        }
+        
         @media (max-width: 768px) {
             .container { 
                 max-width: 100%;
@@ -150,6 +225,12 @@
             }
             .detail-change { 
                 font-size: 16px; 
+            }
+            .target-stocks { 
+                grid-template-columns: 1fr; 
+            }
+            .forecast-conclusion { 
+                font-size: 20px; 
             }
         }
         
@@ -194,6 +275,7 @@
             <button class="tab" onclick="showTab('watchlist')">👁️</button>
             <button class="tab" onclick="showTab('hot-stocks')">🔥</button>
             <button class="tab" onclick="showTab('hot-news')">📰</button>
+            <button class="tab" onclick="showTab('forecast')">🔮</button>
         </div>
         
         <div class="content">
@@ -692,6 +774,44 @@
                     <div class="news-link"><a href="https://www.spglobal.com/spdji/en/indices/equity/sp-500" target="_blank">詳細を見る</a></div>
                 </div>
             </div>
+            
+            <div id="forecast" style="display: none;">
+                <h2>米国株予想分析</h2>
+                <div class="forecast-item">
+                    <div class="forecast-date">分析日: 今日</div>
+                    <div class="forecast-conclusion positive">📈 上昇予想</div>
+                    <div class="forecast-reason">
+                        <h3>予想根拠</h3>
+                        <ul>
+                            <li><strong>AI関連株の好調継続:</strong> NVIDIA、Microsoft、GoogleなどのAI関連企業の業績が堅調で、生成AI需要の拡大が続いています。</li>
+                            <li><strong>Fedの利下げ期待:</strong> インフレ率の低下により、来年上半期の利下げ観測が強まっており、成長株に追い風となっています。</li>
+                            <li><strong>企業業績の堅調さ:</strong> 第4四半期決算で多くの企業が予想を上回る業績を発表しており、企業収益の回復が続いています。</li>
+                            <li><strong>技術的指標:</strong> S&P500が年初来高値を更新し、テクノロジー株のリーダーシップが明確になっています。</li>
+                        </ul>
+                    </div>
+                    <div class="forecast-targets">
+                        <h3>注目銘柄</h3>
+                        <div class="target-stocks">
+                            <div class="target-stock positive">NVIDIA: +5-8%予想</div>
+                            <div class="target-stock positive">Apple: +3-5%予想</div>
+                            <div class="target-stock positive">Microsoft: +4-6%予想</div>
+                            <div class="target-stock positive">Tesla: +6-10%予想</div>
+                        </div>
+                    </div>
+                    <div class="forecast-risk">
+                        <h3>リスク要因</h3>
+                        <ul>
+                            <li>地政学的リスクの拡大</li>
+                            <li>インフレ再加速の可能性</li>
+                            <li>企業業績の下方修正</li>
+                            <li>市場の過熱感による調整</li>
+                        </ul>
+                    </div>
+                    <div class="forecast-disclaimer">
+                        <small>※ この予想は参考情報であり、投資判断は自己責任で行ってください。過去の実績は将来の結果を保証するものではありません。</small>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -701,6 +821,7 @@
             document.getElementById('watchlist').style.display = 'none';
             document.getElementById('hot-stocks').style.display = 'none';
             document.getElementById('hot-news').style.display = 'none';
+            document.getElementById('forecast').style.display = 'none';
             
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             event.target.classList.add('active');
