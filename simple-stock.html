@@ -418,9 +418,12 @@
 <body>
     <div class="container">
         <h1>シンプル株価アプリ</h1>
-        <div id="lastUpdated" style="text-align: center; font-size: 12px; color: #666; margin-bottom: 20px;">読み込み中...</div>
+        <div style="text-align: center; background: #e7f3ff; padding: 12px; border-radius: 8px; margin-bottom: 20px; border: 2px solid #007bff;">
+            <div id="lastUpdated" style="font-size: 16px; font-weight: bold; color: #007bff; margin-bottom: 8px;">📅 データ読み込み中...</div>
+            <div id="lastUpdatedDetail" style="font-size: 13px; color: #555;">ページを読み込んでいます</div>
+        </div>
         <div style="text-align: center; margin-bottom: 20px;">
-            <button onclick="refreshData()" style="padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">🔄 更新</button>
+            <button onclick="refreshData()" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold;">🔄 今すぐ更新</button>
         </div>
         
         <div class="tabs">
@@ -434,9 +437,10 @@
         <div class="content">
             <div id="my-stocks">
                 <h2>保有銘柄</h2>
+                <div id="my-stocksGrid"></div>
                 
-                <h3>投資信託</h3>
-                <div class="stock">
+                <h3 style="display:none;">投資信託</h3>
+                <div class="stock" style="display:none;">
                     <div class="stock-name">iFreeNEXT FANG+</div>
                     <div class="stock-price">¥15,420 <span class="stock-change positive">+¥180 +1.18%</span></div>
                     <div class="stock-details">
@@ -699,11 +703,12 @@
             
             <div id="watchlist" style="display: none;">
                 <h2>ウォッチリスト</h2>
-                <p>銘柄がありません</p>
+                <div id="watchlistGrid"></div>
             </div>
             
             <div id="hot-stocks" style="display: none;">
                 <h2>FAANG+銘柄</h2>
+                <div id="hot-stocksGrid"></div>
                 <div class="stock">
                     <div class="stock-name">AAPL - Apple Inc</div>
                     <div class="stock-price">$180.00 <span class="stock-change positive">+$2.50 +1.41%</span></div>
@@ -1256,6 +1261,14 @@
 
         // 株価データの読み込み
         async function loadStockData() {
+            console.log('データ読み込み開始...');
+            
+            // 読み込み中の表示
+            const timeElement = document.getElementById('lastUpdated');
+            if (timeElement) {
+                timeElement.textContent = '⏳ データを更新中...';
+            }
+            
             try {
                 // すべての銘柄のシンボルを取得
                 const allSymbols = [
@@ -1264,16 +1277,24 @@
                     ...STOCK_CONFIG.hotStocks
                 ].map(stock => stock.symbol);
                 
+                console.log('取得する銘柄:', allSymbols);
+                
                 // 株価データを並列で取得
                 const promises = allSymbols.map(symbol => fetchStockData(symbol));
                 const results = await Promise.allSettled(promises);
                 
+                console.log('取得結果:', results);
+                
                 // 成功したデータのみを保存
+                let successCount = 0;
                 results.forEach((result, index) => {
                     if (result.status === 'fulfilled' && result.value) {
                         stockData[allSymbols[index]] = result.value;
+                        successCount++;
                     }
                 });
+                
+                console.log(`${successCount}/${allSymbols.length} 件のデータを取得しました`);
                 
                 // 現在のタブのデータを表示
                 displayStocks(currentTab);
@@ -1380,17 +1401,50 @@
 
         // 株価データの表示
         function displayStocks(tabName) {
-            const gridElement = document.getElementById(`${tabName}Grid`);
-            if (!gridElement) return;
+            // タブ名をグリッドIDに変換
+            let gridId = '';
+            if (tabName === 'my-stocks') {
+                gridId = 'my-stocksGrid';
+            } else if (tabName === 'watchlist') {
+                gridId = 'watchlistGrid';
+            } else if (tabName === 'hot-stocks') {
+                gridId = 'hot-stocksGrid';
+            } else {
+                return; // ニュースや予想タブはスキップ
+            }
             
-            const stocks = STOCK_CONFIG[tabName] || [];
+            const gridElement = document.getElementById(gridId);
+            if (!gridElement) {
+                console.error('グリッド要素が見つかりません:', gridId);
+                return;
+            }
+            
+            // 銘柄リストを取得
+            let stocks = [];
+            if (tabName === 'my-stocks') {
+                stocks = STOCK_CONFIG.myStocks;
+            } else if (tabName === 'watchlist') {
+                stocks = STOCK_CONFIG.watchlist;
+            } else if (tabName === 'hot-stocks') {
+                stocks = STOCK_CONFIG.hotStocks;
+            }
+            
+            console.log('表示する銘柄:', stocks);
+            
             gridElement.innerHTML = '';
+            
+            if (stocks.length === 0) {
+                gridElement.innerHTML = '<p>銘柄がありません</p>';
+                return;
+            }
             
             stocks.forEach(stock => {
                 const data = stockData[stock.symbol];
                 const card = createStockCard(stock, data);
                 gridElement.appendChild(card);
             });
+            
+            console.log('表示完了:', gridElement.children.length, '件');
         }
 
         // 株価カードの作成
@@ -1470,8 +1524,21 @@
         function updateLastUpdated() {
             lastUpdateTime = new Date();
             const timeElement = document.getElementById('lastUpdated');
+            const detailElement = document.getElementById('lastUpdatedDetail');
+            
             if (timeElement) {
-                timeElement.textContent = `最終更新: ${lastUpdateTime.toLocaleString('ja-JP')}`;
+                const year = lastUpdateTime.getFullYear();
+                const month = String(lastUpdateTime.getMonth() + 1).padStart(2, '0');
+                const day = String(lastUpdateTime.getDate()).padStart(2, '0');
+                const hours = String(lastUpdateTime.getHours()).padStart(2, '0');
+                const minutes = String(lastUpdateTime.getMinutes()).padStart(2, '0');
+                const seconds = String(lastUpdateTime.getSeconds()).padStart(2, '0');
+                
+                timeElement.textContent = `📅 最終更新: ${year}年${month}月${day}日 ${hours}:${minutes}:${seconds}`;
+            }
+            
+            if (detailElement) {
+                detailElement.textContent = `次回自動更新: 5分後 | データソース: リアルタイム株価API`;
             }
         }
 
